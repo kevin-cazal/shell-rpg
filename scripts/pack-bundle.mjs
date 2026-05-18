@@ -1,21 +1,26 @@
 #!/usr/bin/env node
 /**
- * Pack a raw disk image + v86 save_state into an SRG1 bundle (.srpg1).
+ * Pack BIOS + raw disk + v86 save_state into an SRG1 v2 bundle (.srpg1).
  *
  * Usage:
  *   node scripts/pack-bundle.mjs --disk alpine.img --state game.v86state -o game.srpg1
- *   node scripts/pack-bundle.mjs --disk alpine.img --state game.v86state.zst -o game.srpg1
  *
- * State may be raw save_state output or zstd-compressed (.zst); output state section is always zstd.
+ * BIOS default: submodules/v86-runner/public/assets/*.bin (after npm run prepare)
+ * or node_modules/v86/bios/*.bin
  */
 import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import {
+  computeSrpg1Offsets,
   encodeSrpg1Header,
   SRG1_DEFAULT_MEMORY,
-  SRG1_HEADER_SIZE,
 } from "../integrations/bundle/format.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(__dirname, "..");
 
 const { values } = parseArgs({
   options: {
@@ -23,6 +28,8 @@ const { values } = parseArgs({
     state: { type: "string" },
     output: { type: "string", short: "o" },
     memory: { type: "string", default: String(SRG1_DEFAULT_MEMORY) },
+    seabios: { type: "string" },
+    vgabios: { type: "string" },
   },
 });
 
@@ -33,11 +40,33 @@ const memorySize = Number(values.memory);
 
 if (!diskPath || !statePath || !outPath) {
   console.error(
-    "Usage: pack-bundle.mjs --disk DISK.img --state SNAP.v86state -o OUT.srpg1",
+    "Usage: pack-bundle.mjs --disk DISK.img --state SNAP.v86state -o OUT.srpg1 [--seabios PATH] [--vgabios PATH]",
   );
   process.exit(1);
 }
 
+function resolveBiosPath(flag, name) {
+  if (flag) {
+    return flag;
+  }
+  const candidates = [
+    join(ROOT, "submodules/v86-runner/public/assets", name),
+    join(ROOT, "submodules/v86-runner/node_modules/v86/bios", name),
+    join(ROOT, "node_modules/v86/bios", name),
+  ];
+  for (const p of candidates) {
+    if (existsSync(p)) {
+      return p;
+    }
+  }
+  console.error(`Missing ${name}; run npm run prepare or pass --${name.replace(".bin", "")}`);
+  process.exit(1);
+}
+
+const seabiosPath = resolveBiosPath(values.seabios, "seabios.bin");
+const vgabiosPath = resolveBiosPath(values.vgabios, "vgabios.bin");
+const seabios = readFileSync(seabiosPath);
+const vgabios = readFileSync(vgabiosPath);
 const disk = readFileSync(diskPath);
 let stateRaw = readFileSync(statePath);
 
@@ -62,24 +91,32 @@ if (statePath.endsWith(".zst")) {
   }
 }
 
-const diskOffset = SRG1_HEADER_SIZE;
-const stateOffset = diskOffset + disk.length;
+const { seabiosOffset, vgabiosOffset, diskOffset, stateOffset } =
+  computeSrpg1Offsets(seabios.length, vgabios.length, disk.length, stateRaw.length);
+
 const header = encodeSrpg1Header({
   memorySize,
+  seabiosSize: seabios.length,
+  vgabiosSize: vgabios.length,
   diskSize: disk.length,
   stateZstdSize: stateRaw.length,
+  seabiosOffset,
+  vgabiosOffset,
   diskOffset,
   stateOffset,
   v86StateVersion: 6,
   flags: 0,
 });
 
-const out = Buffer.alloc(stateOffset + stateRaw.length);
+const total = stateOffset + stateRaw.length;
+const out = Buffer.alloc(total);
 Buffer.from(header).copy(out, 0);
+seabios.copy(out, seabiosOffset);
+vgabios.copy(out, vgabiosOffset);
 disk.copy(out, diskOffset);
 stateRaw.copy(out, stateOffset);
 
 writeFileSync(outPath, out);
 console.log(
-  `Wrote ${outPath}: disk ${disk.length} bytes, state zstd ${stateRaw.length} bytes, total ${out.length}`,
+  `Wrote ${outPath} (v2): seabios ${seabios.length}, vgabios ${vgabios.length}, disk ${disk.length}, state zstd ${stateRaw.length}, total ${total}`,
 );

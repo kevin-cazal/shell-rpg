@@ -33,7 +33,7 @@ Open the URL shown, pick a `.srpg1` bundle or a raw `.img` from this repo root.
 
 ## SRG1 bundle (disk + saved state, one file)
 
-Format: 64-byte header, raw disk, zstd-compressed v86 `save_state` blob. Loading a `.srpg1` file resumes from the saved state (fast start).
+Format (v2): 64-byte header, **seabios + vgabios**, raw disk, zstd-compressed v86 `save_state`. One file is self-contained except for `v86.wasm` from the web app. Loading resumes from saved state (fast start).
 
 Create a bundle after saving memory from the running VM (menu → Save memory…):
 

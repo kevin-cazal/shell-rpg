@@ -3,6 +3,7 @@ import {
   parseSrpg1Header,
   SRG1_HEADER_SIZE,
   SRG1_MAGIC,
+  SRG1_VERSION,
   validateSrpg1Layout,
 } from "./format.js";
 
@@ -29,13 +30,14 @@ export async function loadShellRpgBundleFile(file, { readSlice }) {
   const header = parseSrpg1Header(headerBuf);
   validateSrpg1Layout(header, file.size);
 
-  const diskBuffer = await readSlice(
-    header.diskOffset,
-    header.diskSize,
-    (pct) => {
-      /* caller maps progress */
-    },
-  );
+  let biosBuffer;
+  let vgaBiosBuffer;
+  if (header.version >= SRG1_VERSION && header.seabiosSize > 0) {
+    biosBuffer = await readSlice(header.seabiosOffset, header.seabiosSize);
+    vgaBiosBuffer = await readSlice(header.vgabiosOffset, header.vgabiosSize);
+  }
+
+  const diskBuffer = await readSlice(header.diskOffset, header.diskSize);
 
   const stateZstd = await readSlice(
     header.stateOffset,
@@ -52,6 +54,8 @@ export async function loadShellRpgBundleFile(file, { readSlice }) {
     diskBuffer,
     initialStateBuffer,
     memorySize: header.memorySize,
+    biosBuffer,
+    vgaBiosBuffer,
     label: file.name,
   };
 }
