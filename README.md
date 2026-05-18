@@ -31,6 +31,10 @@ npm run dev
 
 Open the URL shown, pick the `.img` from this repo root.
 
+## Deploy under a path prefix
+
+`npm run build` emits relative asset URLs (`base: ./`) so you can serve the whole `dist/` folder behind nginx (or similar) at e.g. `/games/shell-rpg/`. Zone backgrounds use the same base via `assetUrl("bg/")`. See `submodules/v86-runner` for `VITE_BASE` if you need an absolute prefix.
+
 ## Submodule layout
 
 | Path | Repository |
