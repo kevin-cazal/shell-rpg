@@ -7,7 +7,8 @@
     "prepare": "./scripts/prepare-assets.sh",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pack-bundle": "npm run pack-bundle --prefix submodules/v86-runner --"
   },
   "dependencies": {
     "@xterm/addon-fit": "^0.10.0",
