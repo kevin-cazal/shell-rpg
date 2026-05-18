@@ -6,6 +6,7 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const runnerRoot = path.resolve(rootDir, "submodules/v86-runner");
 
 export default defineConfig({
+  base: process.env.VITE_BASE ?? "./",
   root: rootDir,
   publicDir: path.join(runnerRoot, "public"),
   resolve: {

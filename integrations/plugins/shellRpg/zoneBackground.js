@@ -2,6 +2,7 @@
  * Shell RPG: terminal host backgrounds driven by hvc1 "bg …" lines.
  */
 import { showPopup } from "@runner/popup/index.js";
+import { assetUrl } from "@runner/util/assetUrl.js";
 import { onHvc1Line } from "@runner/vmHVC1Bridge/index.js";
 
 const TERMINAL_HOST_ID = "terminal";
@@ -48,7 +49,7 @@ function ensureZoneBackground() {
  * @param {{ baseUrl?: string, hostEl?: HTMLElement }} [options]
  */
 export function createZoneBackgroundController(terminal, options = {}) {
-  const baseUrl = options.baseUrl ?? "/bg/";
+  const baseUrl = options.baseUrl ?? assetUrl("bg/");
   const hostEl = options.hostEl ?? terminal?.element?.parentElement;
 
   const apply = (filename) => {

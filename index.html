@@ -21,14 +21,15 @@
     <div id="pick-overlay" class="load-overlay" aria-live="polite">
       <p class="pick-lead">Open your Alpine VM disk locally (no download).</p>
       <p class="pick-hint">
-        Build with ./build.sh, then pick <code>alpine-bios-*.img</code>
+        Pick a <code>.v86b</code> bundle (disk + saved state), or a raw
+        <code>alpine-bios-256M.img</code> from <code>sudo ./build.sh</code>
       </p>
       <label class="pick-btn">
-        Choose disk image…
+        Choose disk or bundle…
         <input
           id="disk-input"
           type="file"
-          accept=".img,.raw,application/octet-stream"
+          accept=".v86b,.img,.raw,application/octet-stream"
         />
       </label>
       <p id="pick-error" class="pick-error" hidden></p>
