@@ -29,7 +29,22 @@ npm run prepare
 npm run dev
 ```
 
-Open the URL shown, pick the `.img` from this repo root.
+Open the URL shown, pick a `.srpg1` bundle or a raw `.img` from this repo root.
+
+## SRG1 bundle (disk + saved state, one file)
+
+Format: 64-byte header, raw disk, zstd-compressed v86 `save_state` blob. Loading a `.srpg1` file resumes from the saved state (fast start).
+
+Create a bundle after saving memory from the running VM (menu → Save memory…):
+
+```sh
+node scripts/pack-bundle.mjs \
+  --disk alpine-bios-YYYY-MM-DD.img \
+  --state snapshot.v86state \
+  -o game.srpg1
+```
+
+Requires `zstd` on the host. Use the same disk buffer the snapshot was taken with (re-build or copy the image used during save).
 
 ## Submodule layout
 
