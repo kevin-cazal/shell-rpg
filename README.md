@@ -22,6 +22,8 @@ sudo ./build.sh
 
 ## Web UI (BIOS, wasm, zone backgrounds)
 
+Zone background PNGs live in `assets/zone-bg/` (browser only). `npm run prepare` copies them into the v86-runner `public/bg/` tree.
+
 ```sh
 npm install
 cd submodules/v86-runner && npm install && cd ../..
