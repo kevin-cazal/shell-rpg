@@ -45,7 +45,20 @@ Guest RAM defaults to **256 MiB** via `.env` (`VITE_VM_MEMORY_MB=256`). Overri
 
 Format implemented in [v86-runner](https://github.com/kevin-cazal/v86-runner): `.v86b` = header + BIOS + raw disk + zstd-compressed v86 `save_state`.
 
-After the VM is running, use the menu → **Save memory…**, then pack:
+**Automated** (headless boot + pack; rebuild the disk image first so guest bridge hooks are present):
+
+```sh
+npm install
+cd submodules/v86-runner && npm install && cd ../..
+npm run prepare
+VITE_VM_MEMORY_MB=256 npm run build-bundle -- \
+  --disk submodules/vm-image/alpine-bios-256M.img \
+  -o shell-rpg-256M.v86b
+```
+
+Boot progress is printed on **serial0**; the snapshot is taken at the splash (`[Press Enter to start]` on hvc0) after guest `splash-ready` / `state-ready` vm-bridge lines.
+
+**Manual fallback:** run the VM in the browser, menu → **Save memory…**, then:
 
 ```sh
 VITE_VM_MEMORY_MB=256 npm run pack-bundle -- \

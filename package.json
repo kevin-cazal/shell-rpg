@@ -2,13 +2,15 @@
   "name": "shell-rpg",
   "private": true,
   "type": "module",
-  "description": "Shell RPG — Alpine guest in the browser (v86)",
+  "description": "Shell RPG \u2014 Alpine guest in the browser (v86)",
   "scripts": {
     "prepare": "./scripts/prepare-assets.sh",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "pack-bundle": "npm run pack-bundle --prefix submodules/v86-runner --"
+    "pack-bundle": "npm run pack-bundle --prefix submodules/v86-runner --",
+    "build-state": "npm run build-state --prefix submodules/v86-runner --",
+    "build-bundle": "npm run build-bundle --prefix submodules/v86-runner --"
   },
   "dependencies": {
     "@xterm/addon-fit": "^0.10.0",
