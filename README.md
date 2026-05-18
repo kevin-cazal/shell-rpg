@@ -69,6 +69,22 @@ VITE_VM_MEMORY_MB=256 npm run pack-bundle -- \
 
 Requires `zstd` on the host. **`memory_size` in the bundle must match** the RAM used when the snapshot was taken (256 MiB by default).
 
+
+## Play online (GitHub Pages)
+
+After enabling **GitHub Pages** (Actions source) on `main`, the app is published at:
+
+**https://kevin-cazal.github.io/shell-rpg/**
+
+1. Use **Download official bundle (.v86b)** on the home screen (from [vm-image releases](https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest)).
+2. Choose the downloaded file with **Choose disk or bundle…**.
+
+The app does not fetch the ~330 MiB bundle automatically on each visit.
+
+## Deploy (GitHub Pages)
+
+Pushes to `main` run `.github/workflows/pages.yml` (Vite build + deploy). Set repository **Pages → Build and deployment → GitHub Actions**.
+
 ## Deploy under a path prefix
 
 `npm run build` emits relative asset URLs (`base: ./`) so you can serve `dist/` behind nginx at e.g. `/games/shell-rpg/`. See `submodules/v86-runner` for `VITE_BASE`.

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
+    <script src="coi-serviceworker.js"></script>
     <header class="toolbar">
       <h1 id="page-title">Shell RPG</h1>
       <span id="status" class="status">Choose a disk image</span>
@@ -19,10 +20,22 @@
       hidden
     />
     <div id="pick-overlay" class="load-overlay" aria-live="polite">
-      <p class="pick-lead">Open your Alpine VM disk locally (no download).</p>
+      <p class="pick-lead">Download the official bundle, then open it here (no automatic download on page load).</p>
       <p class="pick-hint">
-        Pick a <code>.v86b</code> bundle (disk + saved state), or a raw
-        <code>alpine-bios-256M.img</code> from <code>sudo ./build.sh</code>
+        <a
+          id="official-bundle-download"
+          class="pick-download-link"
+          href="#"
+          rel="noopener noreferrer"
+          >Download official bundle (.v86b)</a
+        >
+        from
+        <a
+          href="https://github.com/kevin-cazal/shell-rpg-vm-image/releases"
+          rel="noopener noreferrer"
+          >shell-rpg-vm-image releases</a
+        >, then choose it below. Or use a raw
+        <code>alpine-bios-256M.img</code> from <code>sudo ./build.sh</code>.
       </p>
       <label class="pick-btn">
         Choose disk or bundle…

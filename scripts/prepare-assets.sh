@@ -49,3 +49,11 @@ else
 fi
 
 printf 'Assets ready under %s/public\n' "$RUNNER"
+
+COI_SRC="$ROOT/public/coi-serviceworker.js"
+if [ -f "$COI_SRC" ]; then
+	cp -f "$COI_SRC" "$PUBLIC/coi-serviceworker.js"
+	printf 'COI service worker copied to %s\n' "$PUBLIC"
+else
+	printf 'warn: missing %s (GitHub Pages cross-origin isolation)\n' "$COI_SRC" >&2
+fi
