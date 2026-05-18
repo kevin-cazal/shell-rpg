@@ -1,0 +1,6 @@
+node_modules/
+dist/
+submodules/v86-runner/node_modules/
+*.img
+*.raw
+*.qcow2
