@@ -17,13 +17,13 @@ git submodule update --init --recursive
 ## Build disk image (default 256 MiB)
 
 ```sh
-sudo ./build.sh
+doas ./build.sh
 ```
 
 Produces `alpine-bios-256M.img` in the repo root. For the legacy 512 MiB disk:
 
 ```sh
-IMAGE_SIZE=512M sudo ./build.sh
+IMAGE_SIZE=512M doas ./build.sh
 ```
 
 ## Web UI (BIOS, wasm, zone backgrounds)
