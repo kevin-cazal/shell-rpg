@@ -29,19 +29,19 @@ npm run prepare
 npm run dev
 ```
 
-Open the URL shown, pick a `.srpg1` bundle or a raw `.img` from this repo root.
+Open the URL shown, pick a `.v86b` bundle or a raw `.img` from this repo root.
 
-## SRG1 bundle (disk + saved state, one file)
+## V86B bundle (disk + saved state, one file)
 
-Format (v2): 64-byte header, **seabios + vgabios**, raw disk, zstd-compressed v86 `save_state`. One file is self-contained except for `v86.wasm` from the web app. Loading resumes from saved state (fast start).
+Generic v86-runner format (`.v86b`): 64-byte header, **seabios + vgabios**, raw disk, zstd-compressed v86 `save_state`. Self-contained except for `v86.wasm` from the web app. Loading resumes from saved state (fast start).
 
 Create a bundle after saving memory from the running VM (menu → Save memory…):
 
 ```sh
-node scripts/pack-bundle.mjs \
+npm run pack-bundle -- \
   --disk alpine-bios-YYYY-MM-DD.img \
   --state snapshot.v86state \
-  -o game.srpg1
+  -o game.v86b
 ```
 
 Requires `zstd` on the host. Use the same disk buffer the snapshot was taken with (re-build or copy the image used during save).

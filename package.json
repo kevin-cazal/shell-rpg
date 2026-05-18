@@ -5,7 +5,7 @@
   "description": "Shell RPG — Alpine guest in the browser (v86)",
   "scripts": {
     "prepare": "./scripts/prepare-assets.sh",
-    "pack-bundle": "node scripts/pack-bundle.mjs",
+    "pack-bundle": "node submodules/v86-runner/scripts/pack-v86-bundle.mjs",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -13,7 +13,6 @@
   "dependencies": {
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
-    "fzstd": "^0.1.1",
     "v86": "^0.5.357"
   },
   "devDependencies": {
