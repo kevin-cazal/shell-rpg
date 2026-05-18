@@ -1,16 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shell RPG</title>
     <link rel="stylesheet" href="/src/style.css" />
+    <style>
+      .pick-steps {
+        margin: 1.25rem 0 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+      }
+      .pick-steps li {
+        margin: 0;
+        font-size: 1.05rem;
+        color: #ddd;
+      }
+      .pick-steps .pick-btn {
+        margin-top: 0;
+      }
+    </style>
   </head>
   <body>
     <script src="coi-serviceworker.js"></script>
     <header class="toolbar">
       <h1 id="page-title">Shell RPG</h1>
-      <span id="status" class="status">Choose a disk image</span>
+      <span id="status" class="status">En attente du fichier du jeu</span>
       <div id="menu-root" class="menu-root"></div>
     </header>
     <input
@@ -20,35 +39,35 @@
       hidden
     />
     <div id="pick-overlay" class="load-overlay" aria-live="polite">
-      <p class="pick-lead">Download the official bundle, then open it here (no automatic download on page load).</p>
+      <p class="pick-lead">Pour commencer</p>
+      <ol class="pick-steps">
+        <li>
+          <a
+            id="official-bundle-download"
+            class="pick-download-link"
+            href="#"
+            rel="noopener noreferrer"
+            >Télécharger le fichier du jeu</a
+          >
+        </li>
+        <li>
+          <label class="pick-btn">
+            Ouvrir le fichier ici
+            <input
+              id="disk-input"
+              type="file"
+              accept=".v86b,.img,.raw,application/octet-stream"
+            />
+          </label>
+        </li>
+      </ol>
       <p class="pick-hint">
-        <a
-          id="official-bundle-download"
-          class="pick-download-link"
-          href="#"
-          rel="noopener noreferrer"
-          >Download official bundle (.v86b)</a
-        >
-        from
-        <a
-          href="https://github.com/kevin-cazal/shell-rpg-vm-image/releases"
-          rel="noopener noreferrer"
-          >shell-rpg-vm-image releases</a
-        >, then choose it below. Or use a raw
-        <code>alpine-bios-256M.img</code> from <code>sudo ./build.sh</code>.
+        Le jeu ne se télécharge pas tout seul à l’ouverture de cette page.
       </p>
-      <label class="pick-btn">
-        Choose disk or bundle…
-        <input
-          id="disk-input"
-          type="file"
-          accept=".v86b,.img,.raw,application/octet-stream"
-        />
-      </label>
       <p id="pick-error" class="pick-error" hidden></p>
     </div>
     <div id="load-overlay" class="load-overlay" hidden aria-live="polite">
-      <p id="load-message">Loading…</p>
+      <p id="load-message">Chargement…</p>
       <progress id="load-progress" max="100" value="0"></progress>
     </div>
     <main id="terminal-wrap" class="terminal-wrap" hidden>
