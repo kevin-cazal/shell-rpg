@@ -4,3 +4,5 @@ submodules/v86-runner/node_modules/
 *.img
 *.raw
 *.qcow2
+*.v86b
+*.v86state
