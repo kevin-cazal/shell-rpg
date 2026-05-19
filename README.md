@@ -69,6 +69,16 @@ VITE_VM_MEMORY_MB=256 npm run pack-bundle -- \
 
 Requires `zstd` on the host. **`memory_size` in the bundle must match** the RAM used when the snapshot was taken (256 MiB by default).
 
+## Host file share (`/mnt/host`)
+
+The guest mounts a virtio 9p export at **`/mnt/host`** (see `submodules/vm-image` fstab). In the browser devtools console (with the VM running):
+
+- Host paths are the **9p root** (e.g. `/save.dat`), not `/mnt/host/...`.
+- Guest paths are under **`/mnt/host`** (e.g. `/mnt/host/save.dat`).
+- **`window.host9p.vfs`** — `put` / `get` (upload / download), `listEntries`, `mkdir`, `remove`, `rmdir`, `stat`, `reset`.
+- **`localStorage.host9pDebug=1`** then reload for 9p request logs.
+
+Host VFS state is not saved in v86 memory snapshots; remount or re-push files after loading an old `.v86b` if needed.
 
 ## Play online (GitHub Pages)
 
