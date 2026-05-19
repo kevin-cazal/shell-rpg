@@ -71,14 +71,14 @@ Requires `zstd` on the host. **`memory_size` in the bundle must match** the RAM 
 
 ## Host file share (`/mnt/host`)
 
-The guest mounts a virtio 9p export at **`/mnt/host`** (see `submodules/vm-image` fstab). In the browser devtools console (with the VM running):
+The guest mounts a virtio 9p export at **`/mnt/host`** (see `submodules/vm-image` fstab).
 
-- Host paths are the **9p root** (e.g. `/save.dat`), not `/mnt/host/...`.
-- Guest paths are under **`/mnt/host`** (e.g. `/mnt/host/save.dat`).
-- **`window.host9p.vfs`** — `put` / `get` (upload / download), `listEntries`, `mkdir`, `remove`, `rmdir`, `stat`, `reset`.
+- Host paths are the **9p root** (e.g. `/player.json`), not `/mnt/host/...`.
+- Guest paths are under **`/mnt/host`** (e.g. `/mnt/host/player.json`).
+- **Player state (menu → View player state…):** the engine keeps `/tmp/player.json` and mirrors it to `/mnt/host/player.json` on each save; the browser reads host `/player.json` via `getHost9pVfs()` (integrations). Devtools may still use **`window.host9p.vfs`** for debugging.
 - **`localStorage.host9pDebug=1`** then reload for 9p request logs.
 
-Host VFS state is not saved in v86 memory snapshots; remount or re-push files after loading an old `.v86b` if needed.
+Host VFS state is not saved in v86 memory snapshots; the guest re-copies `player.json` to `/mnt/host` on the next in-game save after loading an old `.v86b`.
 
 ## Play online (GitHub Pages)
 

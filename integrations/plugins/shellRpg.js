@@ -1,10 +1,10 @@
 /**
- * Shell RPG plugin: zone backgrounds + player.json via /dev/hvc1.
+ * Shell RPG plugin: zone backgrounds + player.json via host9p (/mnt/host).
  */
 import { registerPluginMenu } from "@runner/menu/index.js";
 import {
   getPlayerJsonMenuItems,
-  registerPlayerJsonBridge,
+  registerPlayerJsonHost9p,
 } from "./shellRpg/playerJson.js";
 import {
   getZoneBackgroundMenuItems,
@@ -12,7 +12,7 @@ import {
 } from "./shellRpg/zoneBackground.js";
 
 registerZoneBackground();
-registerPlayerJsonBridge();
+registerPlayerJsonHost9p();
 
 registerPluginMenu("shellRpg", "shellRpg", () => [
   ...getZoneBackgroundMenuItems(),
