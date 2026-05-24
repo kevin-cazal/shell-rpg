@@ -1,103 +1,110 @@
 /**
- * Guest pushes /tmp/player.json over hvc1 (vm-bridge-send / vm-bridge-raw xfer).
- * Host keeps the latest payload and shows level + quests in a popup.
+ * Guest exports /tmp/player.json to /mnt/host/player.json (host9p).
+ * Host reads /player.json via getHost9pVfs() for read-only menu display.
  */
+import { getHost9pVfs } from "@runner/host9p/access.js";
 import { showPopup } from "@runner/popup/index.js";
-import { isHvc1BridgeAttached, onHvc1Line } from "@runner/vmHVC1Bridge/index.js";
 
-const SINGLE_PREFIX = "player.json ";
-const XFER_BEGIN = "player.json xfer begin";
-const XFER_CHUNK_PREFIX = "player.json xfer chunk ";
-const XFER_END = "player.json xfer end";
+const PLAYER_JSON_PATH = "/player.json";
 const textDecoder = new TextDecoder("utf-8");
 
+const UNAVAILABLE_MESSAGE =
+  "No player state exported yet. Press Enter on the splash screen, run the player command in-game, or read /tmp/player.json directly in the guest terminal.";
+
 /** @param {...unknown} args */
-function vmbLog(...args) {
+function logPlayerJson(...args) {
   try {
     if (localStorage.getItem("VM_BRIDGE_DEBUG") === "0") return;
   } catch {
     /* ignore */
   }
-  console.log("[vm-bridge][player.json]", ...args);
+  console.log("[shellRpg][player.json]", ...args);
 }
 
-/** Latest guest /tmp/player.json (each bridge line replaces this). */
+/** Latest player state from host9p /player.json. */
 /** @type {object | null} */
 let latestPlayerJson = null;
 
-/** @type {boolean} */
-let xferActive = false;
-/** @type {string} */
-let xferB64 = "";
+/** @type {number} */
+let lastSeenMtime = 0;
+/** @type {number} */
+let lastSeenSize = 0;
+/** @type {ReturnType<typeof setInterval> | null} */
+let pollTimer = null;
 
-function decodeBase64Utf8(b64) {
-  const binary = atob(b64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
+/**
+ * @returns {boolean} true if player JSON was loaded
+ */
+export function refreshPlayerJsonFromHost9p() {
+  const vfs = getHost9pVfs();
+  if (!vfs) {
+    latestPlayerJson = null;
+    return false;
   }
-  return textDecoder.decode(bytes);
-}
 
-function applyPlayerJsonFromGuest(b64) {
-  if (!b64) return;
+  const st = vfs.stat(PLAYER_JSON_PATH);
+  if (!st) {
+    latestPlayerJson = null;
+    lastSeenMtime = 0;
+    lastSeenSize = 0;
+    return false;
+  }
+
+  const bytes = vfs.get(PLAYER_JSON_PATH);
+  if (!bytes || bytes.length === 0) {
+    latestPlayerJson = null;
+    lastSeenMtime = st.mtime;
+    lastSeenSize = st.size;
+    return false;
+  }
+
   try {
-    latestPlayerJson = JSON.parse(decodeBase64Utf8(b64));
-    vmbLog(`updated from guest b64_len=${b64.length}`);
+    latestPlayerJson = JSON.parse(textDecoder.decode(bytes));
+    lastSeenMtime = st.mtime;
+    lastSeenSize = st.size;
+    logPlayerJson(`updated from host9p mtime=${st.mtime} size=${st.size}`);
     window.dispatchEvent(
       new CustomEvent("shellRpg:playerJson", { detail: latestPlayerJson }),
     );
+    return true;
   } catch (err) {
-    vmbLog(`parse failed b64_len=${b64.length}`, err);
-    console.warn("[shellRpg] player.json push parse failed:", err);
+    logPlayerJson("parse failed", err);
+    console.warn("[shellRpg] player.json parse failed:", err);
+    latestPlayerJson = null;
+    return false;
   }
 }
 
-function resetXfer() {
-  xferActive = false;
-  xferB64 = "";
-}
-
-function ingestPlayerJsonLine(line) {
-  if (line === XFER_BEGIN) {
-    vmbLog("xfer begin");
-    xferActive = true;
-    xferB64 = "";
+function pollPlayerJsonFromHost9p() {
+  const vfs = getHost9pVfs();
+  if (!vfs) {
     return;
   }
-
-  if (line.startsWith(XFER_CHUNK_PREFIX)) {
-    const piece = line.slice(XFER_CHUNK_PREFIX.length);
-    if (!xferActive) {
-      xferActive = true;
-      xferB64 = "";
+  const st = vfs.stat(PLAYER_JSON_PATH);
+  if (!st) {
+    if (latestPlayerJson !== null) {
+      latestPlayerJson = null;
+      lastSeenMtime = 0;
+      lastSeenSize = 0;
     }
-    xferB64 += piece;
     return;
   }
-
-  if (line === XFER_END) {
-    const payload = xferB64;
-    resetXfer();
-    applyPlayerJsonFromGuest(payload);
+  if (st.mtime === lastSeenMtime && st.size === lastSeenSize) {
     return;
   }
+  refreshPlayerJsonFromHost9p();
+}
 
-  if (
-    line.startsWith(SINGLE_PREFIX) &&
-    !line.startsWith("player.json xfer")
-  ) {
-    applyPlayerJsonFromGuest(line.slice(SINGLE_PREFIX.length));
+export function registerPlayerJsonHost9p() {
+  if (pollTimer !== null) {
+    return;
   }
+  pollTimer = setInterval(pollPlayerJsonFromHost9p, 1000);
 }
 
 /** @returns {object | null} */
 export function getPlayerJson() {
   return latestPlayerJson;
-}
-
-export function registerPlayerJsonBridge() {
-  onHvc1Line(ingestPlayerJsonLine);
 }
 
 /** Total gained level (same field as engine save: sum of completed quest levels). */
@@ -260,16 +267,15 @@ export function getPlayerJsonMenuItems() {
     {
       type: "action",
       label: "View player state…",
-      disabled: () => !isHvc1BridgeAttached(),
       onClick() {
-        const data = getPlayerJson();
-        if (data) {
-          showPlayerJsonPopup(data);
-          return;
+        if (refreshPlayerJsonFromHost9p()) {
+          const data = getPlayerJson();
+          if (data) {
+            showPlayerJsonPopup(data);
+            return;
+          }
         }
-        showPlayerJsonMessage(
-          "No player state received yet from the guest. Progress in-game or run vm-bridge-player-json.sh.",
-        );
+        showPlayerJsonMessage(UNAVAILABLE_MESSAGE);
       },
     },
   ];
