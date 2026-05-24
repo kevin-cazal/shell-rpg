@@ -56,7 +56,7 @@ VITE_VM_MEMORY_MB=256 npm run build-bundle -- \
   -o shell-rpg-256M.v86b
 ```
 
-Boot progress is printed on **serial0**; the snapshot is taken at the splash (`[Press Enter to start]` on hvc0) after guest `splash-ready` / `state-ready` vm-bridge lines.
+Boot progress is printed on **serial0**; the snapshot is taken after guest `splash-ready` / `state-ready` vm-bridge lines. The intro pager runs later when the host sends `show-intro` (post-resize).
 
 **Manual fallback:** run the VM in the browser, menu → **Save memory…**, then:
 
