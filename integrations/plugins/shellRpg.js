@@ -11,10 +11,12 @@ import {
   registerZoneBackground,
 } from "./shellRpg/zoneBackground.js";
 import { registerIntroAfterVmReady } from "./shellRpg/intro.js";
+import { registerResumeSync } from "./shellRpg/resumeSync.js";
 
 registerZoneBackground();
 registerPlayerJsonHost9p();
 registerIntroAfterVmReady();
+registerResumeSync();
 
 registerPluginMenu("shellRpg", "shellRpg", () => [
   ...getZoneBackgroundMenuItems(),
