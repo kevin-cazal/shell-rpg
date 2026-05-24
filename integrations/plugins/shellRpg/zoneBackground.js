@@ -78,6 +78,12 @@ export function createZoneBackgroundController(terminal, options = {}) {
   return { apply, clear, handleBridgeLine };
 }
 
+/** @param {string} filename e.g. root.png */
+export function applyZoneBackgroundFile(filename) {
+  if (!zoneBackgroundEnabled || !filename) return;
+  ensureZoneBackground()?.apply(filename);
+}
+
 export function registerZoneBackground() {
   onHvc1Line((line) => {
     if (!zoneBackgroundEnabled) return;
