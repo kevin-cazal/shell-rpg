@@ -92,6 +92,34 @@ After enabling **GitHub Pages** (Actions source) on `main`, the app is published
 
 The app does not fetch the ~330 MiB bundle automatically on each visit.
 
+## Container image (GHCR)
+
+Pushes to `main` (and tags `v*`) build and publish:
+
+**`ghcr.io/kevin-cazal/shell-rpg:latest`**
+
+The image serves the Vite production build and bundles **`shell-rpg-256M.v86b`** at `/shell-rpg-256M.v86b` (same-origin download link in the UI). nginx sets COOP/COEP headers required by v86.
+
+**Local build:**
+
+```sh
+git submodule update --init --recursive
+docker build -t shell-rpg:local .
+docker run --rm -p 8080:80 shell-rpg:local
+```
+
+Open http://localhost:8080 — use **Télécharger le fichier du jeu** or open `/shell-rpg-256M.v86b` from the pick screen.
+
+Override the bundle URL at build time:
+
+```sh
+docker build \
+  --build-arg BUNDLE_URL=https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b \
+  -t shell-rpg:local .
+```
+
+Make the package public once: GitHub → **Packages** → `shell-rpg` → Package settings → Change visibility.
+
 ## Deploy (GitHub Pages)
 
 Pushes to `main` run `.github/workflows/pages.yml` (Vite build + deploy). Set repository **Pages → Build and deployment → GitHub Actions**.
