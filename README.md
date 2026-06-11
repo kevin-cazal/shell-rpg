@@ -98,7 +98,7 @@ Pushes to `main` (and tags `v*`) build and publish:
 
 **`ghcr.io/kevin-cazal/shell-rpg:latest`**
 
-The image serves the Vite production build and bundles **`shell-rpg-256M.v86b`** at `/shell-rpg-256M.v86b` (same-origin download link in the UI). nginx sets COOP/COEP headers required by v86.
+The image serves the Vite production build; the bundle download link points to [cdn.cazal.eu/shell-rpg-256M.v86b](https://cdn.cazal.eu/shell-rpg-256M.v86b) (not embedded in the image). nginx sets COOP/COEP headers required by v86.
 
 **Local build:**
 
@@ -108,13 +108,13 @@ docker build -t shell-rpg:local .
 docker run --rm -p 8080:80 shell-rpg:local
 ```
 
-Open http://localhost:8080 — use **Télécharger le fichier du jeu** or open `/shell-rpg-256M.v86b` from the pick screen.
+Open http://localhost:8080 — use **Télécharger le fichier du jeu** to download from the CDN.
 
-Override the bundle URL at build time:
+Override the bundle download URL at build time:
 
 ```sh
 docker build \
-  --build-arg BUNDLE_URL=https://cdn.cazal.eu/shell-rpg-256M.v86b \
+  --build-arg VITE_OFFICIAL_BUNDLE_URL=https://cdn.cazal.eu/shell-rpg-256M.v86b \
   -t shell-rpg:local .
 ```
 
