@@ -87,7 +87,7 @@ After enabling **GitHub Pages** (Actions source) on `main`, the app is published
 
 **https://kevin-cazal.github.io/shell-rpg/**
 
-1. Use **Download official bundle (.v86b)** on the home screen (from [vm-image releases](https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest)).
+1. Use **Télécharger le fichier du jeu** on the home screen (default: [cdn.cazal.eu/shell-rpg-256M.v86b](https://cdn.cazal.eu/shell-rpg-256M.v86b)).
 2. Choose the downloaded file with **Choose disk or bundle…**.
 
 The app does not fetch the ~330 MiB bundle automatically on each visit.
@@ -114,7 +114,7 @@ Override the bundle URL at build time:
 
 ```sh
 docker build \
-  --build-arg BUNDLE_URL=https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b \
+  --build-arg BUNDLE_URL=https://cdn.cazal.eu/shell-rpg-256M.v86b \
   -t shell-rpg:local .
 ```
 

@@ -19,7 +19,7 @@ RUN npm ci \
 
 ARG VITE_BASE=/
 ARG VITE_OFFICIAL_BUNDLE_URL=/shell-rpg-256M.v86b
-ARG BUNDLE_URL=https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b
+ARG BUNDLE_URL=https://cdn.cazal.eu/shell-rpg-256M.v86b
 ARG BUNDLE_FILENAME=shell-rpg-256M.v86b
 
 ENV VITE_BASE=${VITE_BASE} \
