@@ -43,6 +43,7 @@ jobs:
         env:
           VITE_BASE: /${{ github.event.repository.name }}/
           VITE_OFFICIAL_BUNDLE_URL: https://cdn.cazal.eu/shell-rpg-256M.v86b
+          VITE_MIRROR_BUNDLE_URL: https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b
         run: npm run build
 
       - name: Upload Pages artifact

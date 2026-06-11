@@ -1,9 +1,9 @@
 /** Shell RPG product entry: plugins, then generic v86 runner. */
-import { initOfficialBundleDownloadLink } from "./bundleRelease.js";
+import { initBundleDownloadLinks } from "./bundleRelease.js";
 import "./plugins/shellRpg.js";
 import "@runner/app.js";
 
-initOfficialBundleDownloadLink();
+initBundleDownloadLinks();
 initFrenchPickStatus();
 
 /** Garde le texte d’accueil en français sur l’écran de choix du fichier. */

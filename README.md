@@ -87,8 +87,8 @@ After enabling **GitHub Pages** (Actions source) on `main`, the app is published
 
 **https://kevin-cazal.github.io/shell-rpg/**
 
-1. Use **Télécharger le fichier du jeu** on the home screen (default: [cdn.cazal.eu/shell-rpg-256M.v86b](https://cdn.cazal.eu/shell-rpg-256M.v86b)).
-2. Choose the downloaded file with **Choose disk or bundle…**.
+1. **Télécharge** ton environnement de jeu (CDN recommandé, [miroir GitHub Releases](https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b) en secours).
+2. **Choisis** le fichier `.v86b` téléchargé, puis **lance** l'environnement depuis l'écran d'accueil.
 
 The app does not fetch the ~330 MiB bundle automatically on each visit.
 
@@ -98,7 +98,7 @@ Pushes to `main` (and tags `v*`) build and publish:
 
 **`ghcr.io/kevin-cazal/shell-rpg:latest`**
 
-The image serves the Vite production build; the bundle download link points to [cdn.cazal.eu/shell-rpg-256M.v86b](https://cdn.cazal.eu/shell-rpg-256M.v86b) (not embedded in the image). nginx sets COOP/COEP headers required by v86.
+The image serves the Vite production build; the home screen links to [cdn.cazal.eu/shell-rpg-256M.v86b](https://cdn.cazal.eu/shell-rpg-256M.v86b) and a GitHub mirror (not embedded in the image). nginx sets COOP/COEP headers required by v86.
 
 **Local build:**
 
@@ -108,13 +108,14 @@ docker build -t shell-rpg:local .
 docker run --rm -p 8080:80 shell-rpg:local
 ```
 
-Open http://localhost:8080 — use **Télécharger le fichier du jeu** to download from the CDN.
+Open http://localhost:8080 — follow the 3 steps on the home screen (CDN download, file pick, launch).
 
-Override the bundle download URL at build time:
+Override bundle URLs at build time:
 
 ```sh
 docker build \
   --build-arg VITE_OFFICIAL_BUNDLE_URL=https://cdn.cazal.eu/shell-rpg-256M.v86b \
+  --build-arg VITE_MIRROR_BUNDLE_URL=https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b \
   -t shell-rpg:local .
 ```
 
