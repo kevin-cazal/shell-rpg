@@ -19,11 +19,11 @@ RUN npm ci \
 
 ARG VITE_BASE=/
 ARG VITE_OFFICIAL_BUNDLE_URL=https://cdn.cazal.eu/shell-rpg-256M.v86b
-ARG VITE_MIRROR_BUNDLE_URL=https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b
+ARG VITE_MIRROR_BUNDLE_URLS=https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b,https://gitlab.com/api/v4/projects/83317928/packages/generic/vm-artifacts/latest/shell-rpg-256M.v86b,https://lab.epitech.academy/dl/shell-rpg-256M.v86b
 
 ENV VITE_BASE=${VITE_BASE} \
 	VITE_OFFICIAL_BUNDLE_URL=${VITE_OFFICIAL_BUNDLE_URL} \
-	VITE_MIRROR_BUNDLE_URL=${VITE_MIRROR_BUNDLE_URL}
+	VITE_MIRROR_BUNDLE_URLS=${VITE_MIRROR_BUNDLE_URLS}
 
 RUN npm run prepare && npm run build
 

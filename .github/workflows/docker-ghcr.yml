@@ -55,5 +55,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_OFFICIAL_BUNDLE_URL=https://cdn.cazal.eu/shell-rpg-256M.v86b
+            VITE_MIRROR_BUNDLE_URLS=https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b,https://gitlab.com/api/v4/projects/83317928/packages/generic/vm-artifacts/latest/shell-rpg-256M.v86b,https://lab.epitech.academy/dl/shell-rpg-256M.v86b
           cache-from: type=gha
           cache-to: type=gha,mode=max

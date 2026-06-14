@@ -87,7 +87,7 @@ After enabling **GitHub Pages** (Actions source) on `main`, the app is published
 
 **https://kevin-cazal.github.io/shell-rpg/**
 
-1. **Télécharge** ton environnement de jeu (CDN recommandé, [miroir GitHub Releases](https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b) en secours).
+1. **Télécharge** ton environnement de jeu (CDN recommandé ; miroirs en secours : [GitHub](https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b), [GitLab](https://gitlab.com/api/v4/projects/83317928/packages/generic/vm-artifacts/latest/shell-rpg-256M.v86b), [VPS](https://lab.epitech.academy/dl/shell-rpg-256M.v86b)).
 2. **Choisis** le fichier `.v86b` téléchargé, puis **lance** l'environnement depuis l'écran d'accueil.
 
 The app does not fetch the ~330 MiB bundle automatically on each visit.
@@ -98,7 +98,7 @@ Pushes to `main` (and tags `v*`) build and publish:
 
 **`ghcr.io/kevin-cazal/shell-rpg:latest`**
 
-The image serves the Vite production build; the home screen links to [cdn.cazal.eu/shell-rpg-256M.v86b](https://cdn.cazal.eu/shell-rpg-256M.v86b) and a GitHub mirror (not embedded in the image). nginx sets COOP/COEP headers required by v86.
+The image serves the Vite production build; the home screen links to [cdn.cazal.eu/shell-rpg-256M.v86b](https://cdn.cazal.eu/shell-rpg-256M.v86b) and three secondary mirrors: GitHub, GitLab, VPS (not embedded in the image). nginx sets COOP/COEP headers required by v86.
 
 **Local build:**
 
@@ -115,7 +115,7 @@ Override bundle URLs at build time:
 ```sh
 docker build \
   --build-arg VITE_OFFICIAL_BUNDLE_URL=https://cdn.cazal.eu/shell-rpg-256M.v86b \
-  --build-arg VITE_MIRROR_BUNDLE_URL=https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b \
+  --build-arg VITE_MIRROR_BUNDLE_URLS=https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b,https://gitlab.com/api/v4/projects/83317928/packages/generic/vm-artifacts/latest/shell-rpg-256M.v86b,https://lab.epitech.academy/dl/shell-rpg-256M.v86b \
   -t shell-rpg:local .
 ```
 
