@@ -17,7 +17,9 @@ RUN npm ci \
 	&& npm ci --prefix submodules/v86-runner \
 	&& cp -f public/coi-serviceworker.js submodules/v86-runner/public/
 
-ARG VITE_BASE=/
+# The public path the workshop platform embeds the app at (docker/nginx.conf
+# serves it there; the platform's id for this runtime is `v86`).
+ARG VITE_BASE=/runtime/v86/latest/
 ARG VITE_OFFICIAL_BUNDLE_URL=https://cdn.cazal.eu/shell-rpg-256M.v86b
 ARG VITE_MIRROR_BUNDLE_URLS=https://github.com/kevin-cazal/shell-rpg-vm-image/releases/latest/download/shell-rpg-256M.v86b,https://gitlab.com/api/v4/projects/83317928/packages/generic/vm-artifacts/latest/shell-rpg-256M.v86b,https://lab.epitech.academy/dl/shell-rpg-256M.v86b
 
@@ -30,7 +32,7 @@ RUN npm run prepare && npm run build
 FROM nginx:1.27-alpine AS runtime
 
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html/runtime/v86/latest
 
 EXPOSE 80
 
